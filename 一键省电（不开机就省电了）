@@ -1,0 +1,51 @@
+在不同系统/工具中删除分区的代码/命令不同，以下是最常用场景的核心操作（操作前务必备份数据，删除分区会彻底清除数据）：
+ 
+1. Windows 命令提示符（CMD）/ PowerShell
+ 
+以管理员身份运行，通过  diskpart  工具操作：
+ 
+1. 输入  diskpart  并回车，启动分区工具。
+​
+2. 输入  list disk  回车，查看磁盘编号（如 Disk 0）。
+​
+3. 输入  select disk X （X 为目标磁盘编号，如  select disk 0 ）回车。
+​
+4. 输入  list partition  回车，查看该磁盘下的分区编号。
+​
+5. 输入  select partition Y （Y 为目标分区编号，如  select partition 1 ）回车。
+​
+6. 输入  delete partition  回车，删除选中分区（若分区为系统/引导分区，需加  override  强制删除，即  delete partition override ）。
+ 
+2. Linux 终端（如 Ubuntu、CentOS）
+ 
+通过  fdisk  或  parted  工具操作（需 root 权限，前缀加  sudo ）：
+ 
+方式1：fdisk
+ 
+1. 输入  sudo fdisk -l  回车，查看磁盘/分区信息（磁盘路径如  /dev/sda ，分区如  /dev/sda1 ）。
+​
+2. 输入  sudo fdisk /dev/sda （/dev/sda 为目标磁盘）回车。
+​
+3. 输入  d  回车（选择 delete 功能）。
+​
+4. 输入目标分区编号（如  1 ，对应  /dev/sda1 ）回车。
+​
+5. 输入  w  回车，保存修改并执行删除。
+ 
+方式2：parted（更直观）
+ 
+1. 输入  sudo parted /dev/sda  回车，进入目标磁盘的 parted 模式。
+​
+2. 输入  print  回车，查看分区列表。
+​
+3. 输入  rm 分区编号 （如  rm 1 ）回车，删除对应分区。
+​
+4. 输入  quit  回车，退出 parted。
+ 
+3. 注意事项
+ 
+- 所有操作均需管理员/root 权限，否则无法执行。
+​
+- 误删分区后数据难以恢复，操作前必须确认目标分区，并备份重要数据。
+​
+- 若删除系统分区（如 Windows C 盘、Linux / 根分区），会导致系统无法启动。
