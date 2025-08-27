@@ -1,0 +1,829 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: echo Hello, world!
+
+      # Runs a set of commands using the runners shell
+      - name: Run a multi-line script
+        run: |
+          echo Add other acimport tensorflow as tf
+from tensorflow import keras
+import numpy as np
+import matplotlib.pyplot as plt
+
+# 加载MNIST数据集（手写数字）
+(X_train, y_train), (X_test, y_test) = keras.datasets.mnist.load_data()
+
+# 数据预处理
+# 将像素值从0-255缩放到0-1
+X_train = X_train / 255.0
+X_test = X_test / 255.0
+
+# 构建神经网络模型
+model = keras.Sequential([
+    keras.layers.Flatten(input_shape=(28, 28)),  # 将28x28图像展平
+    keras.layers.Dense(128, activation='relu'),  # 全连接层，128个神经元
+    keras.layers.Dense(10, activation='softmax') # 输出层，10个类别（0-9）
+])
+
+# 编译模型
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+
+# 训练模型
+print("开始训练模型...")
+history = model.fit(X_train, y_train, epochs=5, validation_split=0.1)
+
+# 评估模型
+test_loss, test_acc = model.evaluate(X_test, y_test)
+print(f"\n测试准确率: {test_acc:.4f}")
+
+# 进行预测
+predictions = model.predict(X_test)
+
+# 可视化一个测试样本和预测结果
+def plot_sample_prediction(index):
+    plt.figure(figsize=(6, 3))
+    
+    # 显示图像
+    plt.subplot(1, 2, 1)
+    plt.imshow(X_test[index], cmap='gray')
+    plt.title(f"真实标签: {y_test[index]}")
+    
+    # 显示预测概率
+    plt.subplot(1, 2, 2)
+    plt.bar(range(10), predictions[index])
+    plt.title("预测概率")
+    plt.xlabel("数字")
+    plt.ylabel("概率")
+    plt.xticks(range(10))
+    
+    plt.tight_layout()
+    plt.show()
+    
+    predicted_label = np.argmax(predictions[index])
+    print(f"预测结果: {predicted_label}")
+    print(f"置信度: {predictions[index][predicted_label]:.4f}")
+
+# 查看第0个测试样本的预测
+plot_sample_prediction(0)
+
+# 保存模型（可选）
+# model.save('mnist_model.h5')
+# print("模型已保存为 'mnist_model.h5'")-----BEGIN SSH SIGNATURE-----
+U1NIU0lHAAAAAQAAADMAAAALc3NoLWVkMjU1MTkAAAAgkDfJR/W62EXjx5xUVLlO7KjTnN
+vIVe5rpo6039wQQm4AAAAHbHNwb3NlZAAAAAAAAAAGc2hhNTEyAAAAUwAAAAtzc2gtZWQy
+NTUxOQAAAEARN59melIV5OXkkwMRkRoFYj81dhwJxA97RpKpWKF+Nmp7XVfYmNv6GjJ8V4
+7ghgHqlpb4hsFOitNWlCrEbjoG
+-----END SSH SIGNATURE-----data/user/0/bin.mt.plus/files/term/home/.ssimport tensorflow as tf
+from tensorflow import keras
+import numpy as np
+import matplotlib.pyplot as plt
+
+# 加载MNIST数据集（手写数字）
+(X_train, y_train), (X_test, y_test) = keras.datasets.mnist.load_data()
+
+# 数据预处理
+# 将像素值从0-255缩放到0-1
+X_train = X_train / 255.0
+X_test = X_test / 255.0
+
+# 构建神经网络模型
+model = keras.Sequential([
+    keras.layers.Flatten(input_shape=(28, 28)),  # 将28x28图像展平
+    keras.layers.Dense(128, activation='relu'),  # 全连接层，128个神经元
+    keras.layers.Dense(10, activation='softmax') # 输出层，10个类别（0-9）
+])
+
+# 编译模型
+model.compile(optimizer='adam',
+              loss='sparse_categorical_crossentropy',
+              metrics=['accuracy'])
+
+# 训练模型
+print("开始训练模型...")
+history = model.fit(X_train, y_train, epochs=5, validation_split=0.1)
+
+# 评估模型
+test_loss, test_acc = model.evaluate(X_test, y_test)
+print(f"\n测试准确率: {test_acc:.4f}")
+
+# 进行预测
+predictions = model.predict(X_test)
+
+# 可视化一个测试样本和预测结果
+def plot_sample_prediction(index):
+    plt.figure(figsize=(6, 3))
+    
+    # 显示图像
+    plt.subplot(1, 2, 1)
+    plt.imshow(X_test[index], cmap='gray')
+    plt.title(f"真实标签: {y_test[index]}")
+    
+    # 显示预测概率
+    plt.subplot(1, 2, 2)
+    plt.bar(range(10), predictions[index])
+    plt.title("预测概率")
+    plt.xlabel("数字")
+    plt.ylabel("概率")
+    plt.xticks(range(10))
+    
+    plt.tight_layout()
+    plt.show()
+    
+    predicted_label = np.argmax(predictions[index])
+    print(f"预测结果: {predicted_label}")
+    print(f"置信度: {predictions[index][predicted_label]:.4f}")
+
+# 查看第0个测试样本的预测
+plot_sample_prediction(0)
+
+# 保存模型（可选）
+# model.save('mnist_model.h5')
+# print("模型已保存为 'mnist_model.h5'")echo -n 439SkpCk3HPx8M98Dohk7952RWUNt1aH | ssh-keygen -Y sign -n lsposed -f ~/.ssh/<your-key>/data/user/0/bin.mt.plus/files/term/home//data/user/0/bin.mt.plus/files/term/home/.ssh/id_ed25519/: No such file or directory##Xa23QfOeoNreoBa##【深入折腾CPU调频43200分钟，全拉满的骁龙8 Gen3有多猛？-哔哩哔哩】【视频标记点 11:44】 https://b23.tv/8R96A4Xcom.tencent.tmgp.sgame{UnityMain}=7
+com.tencent.tmgp.sgame{UnityGfx*}=6
+com.tencent.tmgp.sgame{Thread-*}=4-6
+com.tencent.tmgp.sgame{UnityPreload}=3-5
+com.tencent.tmgp.sgame{IL2CPP*}=4-6
+com.tencent.tmgp.sgame{CoreThread}=4-6
+com.tencent.tmgp.sgame{mali-*}=4-6
+com.tencent.tmgp.sgame{NativeThread}=4-6
+com.tencent.tmgp.sgame{Worker Thread}=3-5
+com.tencent.tmgp.sgame{Job.[Ww]orker*}=4-6
+com.tencent.tmgp.sgame{UnityChoreo*}=0-3
+com.tencent.tmgp.sgame{AILocalThread}=0-3
+com.tencent.tmgp.sgame{Apollo-*}=0-3
+com.tencent.tmgp.sgame=0-5我的世界
+com.netease.mc.nearme.gamecenter{MINECRAFT*}=7
+com.netease.mc.nearme.gamecenter=4-6
+
+com.netease.mc{MINECRAFT*}=7
+com.netease.mc=4-6
+
+萤火突击
+com.netease.yhtj.nearme.gamecenter=4-6
+com.netease.yhtj.nearme.gamecenter{Game*}=4-7
+
+com.netease.yhtj=4-6
+com.netease.yhtj{Game*}=4-7
+
+com.netease.yhtj.mi=4-6
+com.netease.yhtj.mi{Game*}=4-7
+
+com.netease.yhtj.4399=4-6
+com.netease.yhtj.4399{Game*}=4-7
+
+剑与远征
+com.lilithgames.hgame.cn{GLThread*}=4-7
+com.lilithgames.hgame.cn=4-6
+
+狂野飙车9(国际服)
+com.gameloft.android.ANMP.GloftA9HM=4-6
+com.gameloft.android.ANMP.GloftA9HM{Thread-*}=4-7
+
+超自然行动组
+com.pi.czrxdfirst{UnityMain}=4-7
+com.pi.czrxdfirst{UnityGfxDeviceW}=4-6
+com.pi.czrxdfirst=4-6
+
+全明星街球派对
+com.netease.allstar{UnityMain}=7
+com.netease.allstar=4-6
+
+PES
+com.netease.pes{GameThread}=7
+com.netease.pes{RHIThread}=4-6
+com.netease.pes{RenderThread*}=4-6
+com.netease.pes=4-6
+
+战魂铭人
+com.chillyroom.zhmr.yw{UnityMain}=7
+com.chillyroom.zhmr.yw{UnityGfxDeviceW}=4-6
+com.chillyroom.zhmr.yw{NativeThread}=4-6
+com.chillyroom.zhmr.yw{FMOD*}=4-6
+com.chillyroom.zhmr.yw=4-6
+
+代号血战
+com.netease.newspike{Thread-*}=4-7
+com.netease.newspike=4-6
+
+明日之后
+com.netease.mrzh{Thread-*}=4-7
+com.netease.mrzh=4-6
+
+com.netease.mrzh.mi{Thread-*}=4-7
+com.netease.mrzh.mi=4-6
+
+com.netease.mrzh.nearme.gamecenter{Thread-*}=4-7
+com.netease.mrzh.nearme.gamecenter=4-6
+
+NIKN
+com.gamamobi.nikke=4-6
+com.gamamobi.nikke{UnityMain}=7
+com.gamamobi.nikke{UnityChoreograp}=4-6
+com.gamamobi.nikke{NativeThread}=4-6
+com.gamamobi.nikke{FMOD*}=4-6
+
+com.tencent.nikke=4-6
+com.tencent.nikke{UnityMain}=7
+com.tencent.nikke{UnityChoreograp}=4-6
+com.tencent.nikke{FMOD*}=4-6
+com.tencent.nikke{NativeThread}=4-6
+
+晶核
+com.hermes.p6game{GameThread}=7
+com.hermes.p6game{RHIThread}=4-6
+com.hermes.p6game{RenderThread*}=4-6
+com.hermes.p6game=4-6
+
+com.hermes.p6game.mi{GameThread}=7
+com.hermes.p6game.mi{RHIThread}=4-6
+com.hermes.p6game.mi{RenderThread*}=4-6
+com.hermes.p6game.mi=4-6
+
+com.hermes.p6game.aligames{GameThread}=7
+com.hermes.p6game.aligames{RHIThread}=4-6
+com.hermes.p6game.aligames{RenderThread*}=4-6
+com.hermes.p6game.aligames=4-6
+
+无畏契约
+com.tencent.tmgp.codev{GameThread}=7
+com.tencent.tmgp.codev{RenderThread}=4-6
+com.tencent.tmgp.codev{NativeThread}=4-6
+com.tencent.tmgp.codev=4-6
+
+卡拉彼丘
+com.idreamsky.klbqm{Thread-*}=4-7
+com.idreamsky.klbqm=4-6
+
+炉石传说
+com.blizzard.wtcg.hearthstone{UnityMain}=7
+com.blizzard.wtcg.hearthstone{UnityGfxDeviceW}=4-6
+com.blizzard.wtcg.hearthstone{NativeThread}=4-6
+com.blizzard.wtcg.hearthstone=4-6
+
+com.blizzard.wtcg.hearthstone.cn.huawei{UnityMain}=7
+com.blizzard.wtcg.hearthstone.cn.huawei{UnityGfxDeviceW}=4-6
+com.blizzard.wtcg.hearthstone.cn.huawei{NativeThread}=4-6
+com.blizzard.wtcg.hearthstone.cn.huawei=4-6
+
+com.blizzard.wtcg.hearthstone.cn.dashen{UnityMain}=7
+com.blizzard.wtcg.hearthstone.cn.dashen{UnityGfxDeviceW}=4-6
+com.blizzard.wtcg.hearthstone.cn.dashen{NativeThread}=4-6
+com.blizzard.wtcg.hearthstone.cn.dashen=4-6
+
+无限暖暖
+com.papegames.infinitynikki{GameThread}=7
+com.papegames.infinitynikki{RHIThread}=4-6
+com.papegames.infinitynikki{RenderThread*}=4-6
+com.papegames.infinitynikki{NativeThread}=4-6
+com.papegames.infinitynikki=4-6
+
+高能英雄
+com.tencent.tmgp.gnyx=4-6
+com.tencent.tmgp.gnyx{Thread-[0-3][0-9]}=7
+com.tencent.tmgp.gnyx{Render*}=4-6
+com.tencent.tmgp.gnyx{RHIThread}=4-6
+
+幻塔
+com.dw.h5yvzr.yt=4-6
+com.dw.h5yvzr.yt{GameThread}=7
+com.dw.h5yvzr.yt{RenderThread*}=4-6
+com.dw.h5yvzr.yt{RHIThread}=4-6
+
+com.pwrd.hotta.laohu=4-6
+com.pwrd.hotta.laohu{GameThread}=7
+com.pwrd.hotta.laohu{RenderThread*}=4-6
+com.pwrd.hotta.laohu{RHIThread}=4-6
+
+com.hottagames.hotta.bilibili=4-6
+com.hottagames.hotta.bilibili{GameThread}=7
+com.hottagames.hotta.bilibili{RenderThread*}=4-6
+com.hottagames.hotta.bilibili{RHIThread}=4-6
+
+com.hottagames.hotta.mi=4-6
+com.hottagames.hotta.mi{GameThread}=7
+com.hottagames.hotta.mi{RenderThread*}=4-6
+com.hottagames.hotta.mi{RHIThread}=4-6
+
+荒野乱斗
+com.tencent.tmgp.supercell.brawlstars{Thread-*}=4-6
+com.tencent.tmgp.supercell.brawlstars{Mainloop}=7
+com.tencent.tmgp.supercell.brawlstars=4-6
+
+王牌战争
+com.yingxiong.heroo.nearme.gamecenter{UnityMain}=7
+com.yingxiong.heroo.nearme.gamecenter{UnityGfxDeviceW}=4-6
+com.yingxiong.heroo.nearme.gamecenter{CoreThread}=4-6
+com.yingxiong.heroo.nearme.gamecenter{NativeThread}=4-6
+com.yingxiong.heroo.nearme.gamecenter=4-6
+
+com.yingxiong.heroo{UnityMain}=7
+com.yingxiong.heroo{UnityGfxDeviceW}=4-6
+com.yingxiong.heroo{Job.Worker*}=4-6
+com.yingxiong.heroo{NativeThread}=4-6
+com.yingxiong.heroo=4-6
+
+com.yingxiong.hero.huawei{UnityMain}=7
+com.yingxiong.hero.huawei{UnityGfxDeviceW}=4-6
+com.yingxiong.hero.huawei{Job.Worker*}=4-6
+com.yingxiong.hero.huawei{NativeThread}=4-6
+com.yingxiong.hero.huawei=4-6
+
+com.yingxiong.hero.vivo{UnityMain}=7
+com.yingxiong.hero.vivo{UnityGfxDeviceW}=4-6
+com.yingxiong.hero.vivo{Job.Worker*}=4-6
+com.yingxiong.hero.vivo{NativeThread}=4-6
+com.yingxiong.hero.vivo=4-6
+
+NBA
+com.tencent.tmgp.NBA{UnityMain}=7
+com.tencent.tmgp.NBA{FMOD mixer thre}=4-6
+com.tencent.tmgp.NBA{Worker Thread}=4-6
+com.tencent.tmgp.NBA=4-6
+
+皇室战争
+com.tencent.tmgp.supercell.clashroyale{Mainloop}=7
+com.tencent.tmgp.supercell.clashroyale{Thread-*}=4-6
+com.tencent.tmgp.supercell.clashroyale{FMOD mixer thre}=4-6
+com.tencent.tmgp.supercell.clashroyale=4-6
+
+月圆之夜
+com.ztgame.yyzy{UnityMain}=7
+com.ztgame.yyzy{UnityGfxDeviceW}=4-6
+com.ztgame.yyzy{CoreThread}=4-6
+com.ztgame.yyzy{NativeThread}=4-6
+com.ztgame.yyzy=4-6
+
+战双帕弥什
+com.kurogame.haru.aligames{UnityMain}=7
+com.kurogame.haru.aligames{UnityGfxDeviceW}=4-6
+com.kurogame.haru.aligames{NativeThread}=4-6
+com.kurogame.haru.aligames=4-6
+com.kurogame.haru.aligames:core=0-3
+com.kurogame.haru.aligames:WebView=0-3
+
+com.kurogame.haru.hero{UnityMain}=7
+com.kurogame.haru.hero{UnityGfxDeviceW}=4-6
+com.kurogame.haru.hero{NativeThread}=4-6
+com.kurogame.haru.hero=4-6
+com.kurogame.haru.hero:core=0-3
+com.kurogame.haru.hero:WebView=0-3
+
+王者荣耀
+com.tencent.tmgp.sgame{UnityMain}=7
+com.tencent.tmgp.sgame{UnityGfxDeviceW}=4-6
+com.tencent.tmgp.sgame{Job.worker*}=4-6
+com.tencent.tmgp.sgame{CoreThread}=4-6
+com.tencent.tmgp.sgame{NativeThread}=4-6
+com.tencent.tmgp.sgame=4-6
+
+第五人格
+com.netease.dwrg.nearme.gamecenter{Thread-*}=4-7
+com.netease.dwrg.nearme.gamecenter=4-6
+
+com.netease.dwrg{Thread-*}=4-7
+com.netease.dwrg=4-6
+
+com.netease.dwrg.mi{Thread-*}=4-7
+com.netease.dwrg.mi=4-6
+
+永劫无间
+com.netease.l22.nearme.gamecenter=4-6
+com.netease.l22.nearme.gamecenter{UnityMain}=7
+com.netease.l22.nearme.gamecenter{UnityGfxDeviceW}=4-6
+com.netease.l22.nearme.gamecenter{pool*}=0-3
+
+com.netease.l22=4-6
+com.netease.l22{UnityMain}=7
+com.netease.l22{UnityGfxDeviceW}=4-6
+com.netease.l22{pool*}=0-3
+
+com.netease.l22.mi=4-6
+com.netease.l22.mi{UnityMain}=7
+com.netease.l22.mi{UnityGfxDeviceW}=4-6
+com.netease.l22.mi{pool*}=4-6
+
+燕云十六声
+com.netease.yyslscn=0-6
+com.netease.yyslscn{Thread-*}=4-7
+com.netease.yyslscn{Compute_w_*}=4-7
+com.netease.yyslscn{NativeThread}=4-7
+
+暗区突围
+com.tencent.mf.uam{RHIThread}=4-6
+com.tencent.mf.uam{GameThread}=7
+com.tencent.mf.uam{RenderThread*}=4-6
+com.tencent.mf.uam=4-6
+
+英雄之刃
+com.nd.he.gamename.m4399=4-6
+com.nd.he.gamename.m4399{GLThread*}=4-7
+
+com.tq.he.nearme.gamecenter=4-6
+com.tq.he.nearme.gamecenter{GLThread*}=4-7
+
+com.tencent.tmgp.coslegend=4-6
+com.tencent.tmgp.coslegend{GLThread*}=4-7
+
+金铲铲之战
+com.tencent.jkchess{UnityMain}=7
+com.tencent.jkchess{Thread-*}=4-6
+com.tencent.jkchess{LogicThread}=4-6
+com.tencent.jkchess{Job.*}=4-6
+com.tencent.jkchess=4-6
+
+崩坏-星穹铁道
+com.miHoYo.hkrpg{UnityMain}=7
+com.miHoYo.hkrpg{UnityGfxDeviceW}=4-6
+com.miHoYo.hkrpg{NativeThread}=4-6
+com.miHoYo.hkrpg=4-6
+
+崩坏3（外服）
+com.miHoYo.bh3.uc{UnityMain}=7
+com.miHoYo.bh3.uc{UnityGfxDeviceW}=4-6
+com.miHoYo.bh3.uc{NativeThread}=4-6
+com.miHoYo.bh3.uc=4-6
+
+com.miHoYo.bh3.mi{UnityMain}=7
+com.miHoYo.bh3.mi{UnityGfxDeviceW}=4-6
+com.miHoYo.bh3.mi{NativeThread}=4-6
+com.miHoYo.bh3.mi=4-6
+
+com.miHoYo.enterprise.NGHSoD{UnityMain}=7
+com.miHoYo.enterprise.NGHSoD{UnityGfxDeviceW}=4-6
+com.miHoYo.enterprise.NGHSoD{NativeThread}=4-6
+com.miHoYo.enterprise.NGHSoD=4-6
+
+com.miHoYo.bh3.bilibili{UnityMain}=7
+com.miHoYo.bh3.bilibili{UnityGfxDeviceW}=4-6
+com.miHoYo.bh3.bilibili{NativeThread}=4-6
+com.miHoYo.bh3.bilibili=4-6
+
+原神（外服）
+com.miHoYo.GenshinImpact{UnityMain}=7
+com.miHoYo.GenshinImpact{UnityGfxDeviceW}=4-6
+com.miHoYo.GenshinImpact{NativeThread}=4-6
+com.miHoYo.GenshinImpact=4-6
+
+com.miHoYo.ys.bilibili=4-6
+com.miHoYo.ys.bilibili{UnityMain}=7
+com.miHoYo.ys.bilibili{UnityGfxDeviceW}=4-6
+com.miHoYo.ys.bilibili{NativeThread}=4-6
+
+com.miHoYo.ys.mi=4-6
+com.miHoYo.ys.mi{UnityMain}=7
+com.miHoYo.ys.mi{UnityGfxDeviceW}=4-6
+com.miHoYo.ys.mi{NativeThread}=4-6
+
+节奏大师
+com.tencent.game.rhythmmaster=4-6
+com.tencent.game.rhythmmaster{GLThread*}=7
+com.tencent.game.rhythmmaster{mali-event-hand}=4-6
+com.tencent.game.rhythmmaster{mali-cpu-comman}=4-6
+com.tencent.game.rhythmmaster{binder:*}=4-6
+
+巅峰极速
+com.netease.race=4-6
+com.netease.race{GameThread}=7
+com.netease.race{EGOThread}=4-6
+com.netease.race{RHIThread}=4-6
+
+极品飞车：集结
+com.tencent.nfsonline=4-6
+com.tencent.nfsonline{GameThread}=7
+com.tencent.nfsonline{RHIThread}=4-6
+com.tencent.nfsonline{RenderThread*}=4-6
+com.tencent.nfsonline{NativeThread}=4-6
+
+王者荣耀国际版
+com.levelinfinite.sgameGlobal.midaspay{UnityMain}=7
+com.levelinfinite.sgameGlobal.midaspay{UnityGfxDeviceW}=4-6
+com.levelinfinite.sgameGlobal.midaspay{Job.worker*}=4-6
+com.levelinfinite.sgameGlobal.midaspay{CoreThread}=4-6
+com.levelinfinite.sgameGlobal.midaspay{NativeThread}=4-6
+com.levelinfinite.sgameGlobal.midaspay=4-6
+
+com.levelinfinite.sgameGlobal{UnityMain}=7
+com.levelinfinite.sgameGlobal{UnityGfxDeviceW}=4-6
+com.levelinfinite.sgameGlobal{Job.worker*}=4-6
+com.levelinfinite.sgameGlobal{CoreThread}=4-6
+com.levelinfinite.sgameGlobal{NativeThread}=4-6
+com.levelinfinite.sgameGlobal=4-6
+
+三国杀
+com.sgshd.nearme.gamecenter=4-6
+com.sgshd.nearme.gamecenter{binder:6563_*}=4-6
+com.sgshd.nearme.gamecenter{GLThread *}=7
+
+英雄杀
+com.qqgame.mic=4-6
+com.qqgame.mic{GR-AudioThread}=4-6
+com.qqgame.mic{UnityMain}=7
+com.qqgame.mic{MediaCodec_loop}=4-6
+
+决战平安京
+com.netease.moba{Thread-3[0-9]}=7
+com.netease.moba{Thread-5[0-9]}=4-6
+com.netease.moba{MediaCodec_loop}=4-6
+com.netease.moba=4-6
+
+com.netease.moba.nearme.gamecenter{Thread-3[0-9]}=7
+com.netease.moba.nearme.gamecenter{Thread-5[0-9]}=4-6
+com.netease.moba.nearme.gamecenter{MediaCodec_loop}=4-6
+com.netease.moba.nearme.gamecenter=4-6
+
+王牌竞速
+com.netease.aceracer.aligames{Thread-*}=7
+com.netease.aceracer.aligames=4-6
+
+com.netease.aceracer.nearme.gamecenter{Thread-*}=7
+com.netease.aceracer.nearme.gamecenter=4-6
+
+PUBG Mobile 
+com.tencent.ig=4-6
+com.tencent.ig{UEGameThread}=4-7
+com.tencent.ig{RenderThread*}=4-7
+
+com.tencent.ig:plugin=4-7
+libtun2socks.so=4-7
+
+com.rekoo.pubgm=4-6
+com.rekoo.pubgm{UEGameThread}=4-7
+com.rekoo.pubgm{RenderThread*}=4-7
+
+com.vng.pubgmobile=4-6
+com.vng.pubgmobile{UEGameThread}=4-7
+com.vng.pubgmobile{RenderThread*}=4-7
+
+英雄联盟
+com.tencent.lolm{UnityMain}=7
+com.tencent.lolm{LogicThread}=4-6
+com.tencent.lolm{Thread-[2-3][0-9]}=4-6
+com.tencent.lolm{NativeThread}=4-6
+com.tencent.lolm=4-6
+
+三角洲
+com.tencent.tmgp.dfm{RenderThread}=4-6
+com.tencent.tmgp.dfm{GameThread}=7
+com.tencent.tmgp.dfm=4-6
+
+和平精英
+com.tencent.tmgp.pubgmhd{Thread-[0-2][0-9]}=7
+com.tencent.tmgp.pubgmhd{RenderThread*}=4-6
+com.tencent.tmgp.pubgmhd{RHIThread}=4-6
+com.tencent.tmgp.pubgmhd{MainThread-UE4}=4-6
+com.tencent.tmgp.pubgmhd{NativeThread}=4-6
+com.tencent.tmgp.pubgmhd{TaskGraphNP *}=4-6
+com.tencent.tmgp.pubgmhd=4-6
+
+QQ飞车
+com.tencent.tmgp.speedmobile{UnityMain}=7
+com.tencent.tmgp.speedmobile{UnityGfxDeviceW}=4-6
+com.tencent.tmgp.speedmobile{Thread-*}=4-6
+com.tencent.tmgp.speedmobile{NativeThread}=4-6
+com.tencent.tmgp.speedmobile=4-6
+
+鸣潮
+com.kurogame.mingchao{RenderThread*}=4-6
+com.kurogame.mingchao{RHIThread}=4-6
+com.kurogame.mingchao{FAsyncLoading}=0-7
+com.kurogame.mingchao{GameThread}=7
+com.kurogame.mingchao=4-6
+
+开放空间
+com.Nekootan.kfkj.android=4-6
+com.Nekootan.kfkj.android{UnityMain}=7
+com.Nekootan.kfkj.android{UnityGfxDeviceW}=4-6
+com.Nekootan.kfkj.android{NativeThread}=4-6
+
+com.Nekootan.kfkj.yhlm.mi{UnityMain}=7
+com.Nekootan.kfkj.yhlm.mi{UnityGfxDeviceW}=4-6
+com.Nekootan.kfkj.yhlm.mi{NativeThread}=4-6
+com.Nekootan.kfkj.yhlm.mi=4-6
+
+com.Nekootan.kfkj.android.bilibili=4-6
+com.Nekootan.kfkj.android.bilibili{UnityMain}=7
+com.Nekootan.kfkj.android.bilibili{UnityGfxDeviceW}=4-6
+com.Nekootan.kfkj.android.bilibili{NativeThread}=4-6
+
+穿越火线
+com.tencent.tmgp.cf{UnityMain}=7
+com.tencent.tmgp.cf{UnityGfxDeviceW}=4-6
+com.tencent.tmgp.cf{NativeThread}=4-6
+com.tencent.tmgp.cf=4-6
+
+跑跑卡丁车
+cent.tmgp.WePop{UnityMain}=7
+cent.tmgp.WePop{Thread-*}=4-6
+cent.tmgp.WePop=4-6
+
+圣斗士星矢
+com.tencent.tmgp.sskgame{UnityMain}=7
+com.tencent.tmgp.sskgame{Thread-*}=4-6
+com.tencent.tmgp.sskgame=4-6
+
+明日方舟
+com.hypergryph.arknights{UnityMain}=7
+com.hypergryph.arknights{Thread-*}=4-6
+com.hypergryph.arknights=4-6
+
+球球大作战
+com.ztgame.bob{UnityMain}=7
+com.ztgame.bob{UnityGxDevie}=4-6
+com.ztgame.bob{NativeThread}=4-6
+com.ztgame.bob=4-6
+
+跑跑卡丁车
+com.tencent.tmgp.WePop{UnityMain}=7
+com.tencent.tmgp.WePop{Thread-*}=4-6
+com.tencent.tmgp.WePop{UnityChoreograp}=4-6
+com.tencent.tmgp.WePop=4-6
+
+绝区零
+com.miHoYo.Nap{UnityMain}=7
+com.miHoYo.Nap{UnityGfxDeviceW}=4-6
+com.miHoYo.Nap{NativeThread}=4-6
+com.miHoYo.Nap=4-6
+
+雀魂麻将
+com.soulgamechst.majsoul{UnityMain}=7
+com.soulgamechst.majsoul{Thread-*}=4-6
+com.soulgamechst.majsoul=4-6
+
+蛋仔派对
+com.netease.party{MainThread}=7
+com.netease.party=4-6
+
+元气骑士
+com.ChillyRoom.DungeonShooter{Thread 0x0xb400}=4-6
+com.ChillyRoom.DungeonShooter{UnityMain}=7
+com.ChillyRoom.DungeonShooter{UnityGfxDeviceW}=4-6
+com.ChillyRoom.DungeonShooter=4-6
+
+火影忍者
+com.tencent.KiHan{UnityMain}=7
+com.tencent.KiHan{UnityGfxDeviceW}=4-6
+com.tencent.KiHan{NativeThread}=4-6
+com.tencent.KiHan=4-6
+
+光遇
+com.netease.sky.nearme.gamecenter=4-6
+com.netease.sky.nearme.gamecenter{MainThread}=7
+com.netease.sky.nearme.gamecenter{JobThread*}=4-6
+
+com.netease.sky.huawei=4-6
+com.netease.sky.huawei{MainThread}=7
+com.netease.sky.huawei{JobThread*}=4-6
+
+com.netease.sky=4-6
+com.netease.sky{MainThread}=7
+com.netease.sky{JobThread*}=4-6
+
+com.tencent.tmgp.eyou.eygy=4-6
+com.tencent.tmgp.eyou.eygy{MainThread}=7
+com.tencent.tmgp.eyou.eygy{JobThread*}=4-6
+
+com.netease.sky.vivo{MainThread}=7
+com.netease.sky.vivo{JobThread*}=4-6
+com.netease.sky.vivo=4-6
+
+逆水寒
+com.netease.nshm.nearme.gamecenter{UnityMain}=7
+com.netease.nshm.nearme.gamecenter{UnityGfxDeviceW}=4-6
+com.netease.nshm.nearme.gamecenter{NativeThread}=4-6
+com.netease.nshm.nearme.gamecenter=4-6
+
+com.netease.nshm{UnityMain}=7
+com.netease.nshm{UnityGfxDeviceW}=4-6
+com.netease.nshm{NativeThread}=4-6
+com.netease.nshm=4-6
+
+原神
+com.miHoYo.Yuanshen{UnityMain}=7
+com.miHoYo.Yuanshen{UnityGfxDeviceW}=4-6
+com.miHoYo.Yuanshen=4-6
+com.miHoYo.Yuanshen{UnityMulti*}=4-6
+com.miHoYo.Yuanshen{NativeThread}=4-6
+
+使命召唤
+com.tencent.tmgp.cod{UnityMain}=7
+com.tencent.tmgp.cod{UnityGfxDeviceW}=4-6
+com.tencent.tmgp.cod{NativeThread}=4-6
+com.tencent.tmgp.cod=4-6
+
+球球大作战
+com.ztgame.bob{UnityMain}=7
+com.ztgame.bob{UnityGxDevie}=4-6
+com.ztgame.bob{NativeThread}=4-6
+com.ztgame.bob=4-6
+
+部落冲突
+com.tencent.tmgp.supercell.clashofclans{Mainloop}=7
+com.tencent.tmgp.supercell.clashofclans{Pool-2-thread-1}=4-6
+com.tencent.tmgp.supercell.clashofclans{Pool-2-thread-2}=4-6
+com.tencent.tmgp.supercell.clashofclans=4-6
+
+com.supercell.clashofclans{Mainloop}=7
+com.supercell.clashofclans{Thread-*}=4-6
+com.supercell.clashofclans{FMOD*}=4-6
+com.supercell.clashofclans=4-6
+
+尘白禁区
+com.dragonli.projectsnow.lhm{RenderThread*}=4-6
+com.dragonli.projectsnow.lhm{RHIThread}=7
+com.dragonli.projectsnow.lhm{GameThread}=4-6
+com.dragonli.projectsnow.lhm=4-6
+
+地下城与勇士手游
+com.tencent.tmgp.dnf{UnityMain}=7
+com.tencent.tmgp.dnf{UnityGfxDeviceW}=4-6
+com.tencent.tmgp.dnf{NativeThread}=4-6
+com.tencent.tmgp.dnf=4-6
+
+阴阳师
+com.netease.onmyoji{UnityMain}=7
+com.netease.onmyoji{UnityGfxDeviceW}=4-6
+com.netease.onmyoji{NativeThread}=4-6
+com.netease.onmyoji=4-6
+
+元梦之星
+com.tencent.letsgo{RenderThread*}=4-6
+com.tencent.letsgo{RHIThread}=7
+com.tencent.letsgo{GameThread}=4-6
+com.tencent.letsgo=4-6
+
+香肠派对
+com.sofunny.Sausage{UnityMain}=7
+com.sofunny.Sausage{UnityGfxDeviceW}=4-6
+com.sofunny.Sausage{NativeThread}=4-6
+com.sofunny.Sausage=4-6
+
+碧蓝航线
+com.bilibili.azurlane{UnityMain}=7
+com.bilibili.azurlane{UnityGfxDeviceW}=4-6
+com.bilibili.azurlane{NativeThread}=4-6
+com.bilibili.azurlane=4-6
+
+航海王
+com.tencent.hhw{GameThread}=7
+com.tencent.hhw{RHIThread}=4-6
+com.tencent.hhw{RenderThread *}=4-6
+com.tencent.hhw=4-6
+
+com.hermes.h1game{UnityMain}=7
+com.hermes.h1game{NativeThread}=4-6
+com.hermes.h1game{Job.*}=4-6
+com.hermes.h1game=4-6
+
+com.hermes.h1game.m4399{UnityMain}=7
+com.hermes.h1game.m4399{NativeThread}=4-6
+com.hermes.h1game.m4399{Job.*}=4-6
+com.hermes.h1game.m4399=4-6
+##X-28JC5ebBwUyUFp## 王者荣耀送限时点券【高级河灯心灵战警UT5T64】今天我是高级河灯，点亮可获得35限时点券，复制口令传递心愿吧!性能
+cpu_cluster 0
+min500
+max1700
+cluster 1
+dmin622
+max1900
+cluster 2
+min798
+max2000均衡
+cpu_cluster 0
+min500
+max1600
+cluster 1
+dmin622
+max1700
+cluster 2
+min798
+max1700tions to build,
+          echo test, and deploy your project.
