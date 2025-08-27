@@ -1,0 +1,360 @@
+# -*- coding: utf-8 -*-
+"""
+DeepSeek API 使用示例 - 可运行版本
+创建日期: 2024
+"""
+
+import os
+import time
+import json
+import requests
+from typing import List, Dict, Optional
+import logging
+from dataclasses import dataclass
+from enum import Enum
+import re
+
+# ==================== 配置部分 ====================
+class ModelVersion(Enum):
+    DEEPSEEK_CHAT = "deepseek-chat"
+    DEEPSEEK_CODER = "deepseek-coder"
+    DEEPSEEK_MATH = "deepseek-math"
+
+@dataclass
+class APIConfig:
+    api_key: str = "your_api_key_here"  # 需要替换为实际API密钥
+    base_url: str = "https://api.deepseek.com/v1"
+    timeout: int = 30
+    max_retries: int = 3
+    default_model: ModelVersion = ModelVersion.DEEPSEEK_CHAT
+
+# ==================== 日志设置 ====================
+def setup_logger() -> logging.Logger:
+    """设置日志记录器"""
+    logger = logging.getLogger("DeepSeekClient")
+    logger.setLevel(logging.INFO)
+    
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+    
+    # 控制台输出
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
+    
+    # 文件输出
+    file_handler = logging.FileHandler('deepseek_client.log', encoding='utf-8')
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+    
+    return logger
+
+# ==================== DeepSeek客户端 ====================
+class DeepSeekClient:
+    """DeepSeek API客户端"""
+    
+    def __init__(self, config: APIConfig):
+        self.config = config
+        self.logger = setup_logger()
+        self.session = requests.Session()
+        self.session.headers.update({
+            "Authorization": f"Bearer {config.api_key}",
+            "Content-Type": "application/json"
+        })
+        self.logger.info("DeepSeek客户端初始化完成")
+    
+    def _make_request(self, endpoint: str, data: Dict, retry_count: int = 0) -> Optional[Dict]:
+        """发送API请求"""
+        url = f"{self.config.base_url}/{endpoint}"
+        
+        try:
+            response = self.session.post(
+                url, 
+                json=data, 
+                timeout=self.config.timeout
+            )
+            response.raise_for_status()
+            return response.json()
+            
+        except requests.exceptions.RequestException as e:
+            self.logger.error(f"请求失败: {str(e)}")
+            
+            if retry_count < self.config.max_retries:
+                self.logger.info(f"第{retry_count + 1}次重试...")
+                time.sleep(2 ** retry_count)  # 指数退避
+                return self._make_request(endpoint, data, retry_count + 1)
+            
+            return None
+    
+    def chat_completion(self, 
+                       messages: List[Dict[str, str]],
+                       model: ModelVersion = None,
+                       temperature: float = 0.7,
+                       max_tokens: int = 2000) -> Optional[str]:
+        """聊天补全接口"""
+        model = model or self.config.default_model
+        
+        request_data = {
+            "model": model.value,
+            "messages": messages,
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+            "stream": False
+        }
+        
+        self.logger.info(f"发送聊天请求到模型: {model.value}")
+        response = self._make_request("chat/completions", request_data)
+        
+        if response and "choices" in response and len(response["choices"]) > 0:
+            return response["choices"][0]["message"]["content"]
+        
+        return None
+    
+    def list_models(self) -> Optional[List[str]]:
+        """获取可用模型列表"""
+        try:
+            response = self.session.get(
+                f"{self.config.base_url}/models",
+                timeout=self.config.timeout
+            )
+            response.raise_for_status()
+            models_data = response.json()
+            return [model["id"] for model in models_data.get("data", [])]
+        except Exception as e:
+            self.logger.error(f"获取模型列表失败: {str(e)}")
+            return None
+
+# ==================== 工具函数 ====================
+class TextProcessor:
+    """文本处理工具类"""
+    
+    @staticmethod
+    def sanitize_text(text: str) -> str:
+        """清理文本"""
+        # 移除多余的空格和换行
+        text = re.sub(r'\s+', ' ', text.strip())
+        # 移除特殊字符（保留基本标点）
+        text = re.sub(r'[^\w\s.,!?;:()\-]', '', text)
+        return text
+    
+    @staticmethod
+    def split_into_chunks(text: str, chunk_size: int = 1000) -> List[str]:
+        """将文本分块"""
+        chunks = []
+        for i in range(0, len(text), chunk_size):
+            chunk = text[i:i + chunk_size]
+            chunks.append(chunk)
+        return chunks
+    
+    @staticmethod
+    def format_code_response(code: str, language: str = "python") -> str:
+        """格式化代码响应"""
+        return f"```{language}\n{code}\n```"
+
+# ==================== 文件操作类 ====================
+class FileManager:
+    """文件管理类"""
+    
+    def __init__(self):
+        self.logger = setup_logger()
+    
+    def read_file(self, file_path: str) -> Optional[str]:
+        """读取文件内容"""
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                return file.read()
+        except Exception as e:
+            self.logger.error(f"读取文件失败: {str(e)}")
+            return None
+    
+    def write_file(self, file_path: str, content: str) -> bool:
+        """写入文件"""
+        try:
+            # 确保目录存在
+            os.makedirs(os.path.dirname(file_path), exist_ok=True)
+            
+            with open(file_path, 'w', encoding='utf-8') as file:
+                file.write(content)
+            self.logger.info(f"文件已保存: {file_path}")
+            return True
+        except Exception as e:
+            self.logger.error(f"写入文件失败: {str(e)}")
+            return False
+    
+    def append_to_file(self, file_path: str, content: str) -> bool:
+        """追加内容到文件"""
+        try:
+            with open(file_path, 'a', encoding='utf-8') as file:
+                file.write(content + '\n')
+            return True
+        except Exception as e:
+            self.logger.error(f"追加文件失败: {str(e)}")
+            return False
+
+# ==================== 示例使用类 ====================
+class DeepSeekExample:
+    """DeepSeek使用示例"""
+    
+    def __init__(self):
+        self.config = APIConfig()
+        self.client = DeepSeekClient(self.config)
+        self.file_manager = FileManager()
+        self.text_processor = TextProcessor()
+        self.logger = setup_logger()
+    
+    def demonstrate_chat_capability(self) -> str:
+        """演示聊天能力"""
+        examples = [
+            {
+                "role": "user",
+                "content": "请用Python写一个计算斐波那契数列的函数"
+            },
+            {
+                "role": "user", 
+                "content": "解释一下Transformer模型的工作原理"
+            },
+            {
+                "role": "user",
+                "content": "如何提高深度学习模型的训练效率？"
+            }
+        ]
+        
+        results = []
+        for example in examples:
+            self.logger.info(f"处理请求: {example['content'][:50]}...")
+            
+            response = self.client.chat_completion([example])
+            if response:
+                cleaned_response = self.text_processor.sanitize_text(response)
+                results.append({
+                    "question": example["content"],
+                    "answer": cleaned_response
+                })
+            
+            time.sleep(1)  # 避免请求过于频繁
+        
+        return json.dumps(results, ensure_ascii=False, indent=2)
+    
+    def create_sample_code(self) -> str:
+        """创建示例代码"""
+        sample_code = '''
+"""
+DeepSeek API 集成示例
+这是一个完整的DeepSeek API使用示例
+"""
+
+import requests
+import json
+
+class SimpleDeepSeekClient:
+    def __init__(self, api_key):
+        self.api_key = api_key
+        self.base_url = "https://api.deepseek.com/v1"
+        self.headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+    
+    def chat(self, message, model="deepseek-chat"):
+        """发送聊天消息"""
+        payload = {
+            "model": model,
+            "messages": [{"role": "user", "content": message}],
+            "temperature": 0.7,
+            "max_tokens": 2000
+        }
+        
+        try:
+            response = requests.post(
+                f"{self.base_url}/chat/completions",
+                headers=self.headers,
+                json=payload,
+                timeout=30
+            )
+            response.raise_for_status()
+            return response.json()["choices"][0]["message"]["content"]
+        except Exception as e:
+            return f"错误: {str(e)}"
+
+# 使用示例
+if __name__ == "__main__":
+    # 需要替换为你的实际API密钥
+    API_KEY = "your_actual_api_key_here"
+    
+    client = SimpleDeepSeekClient(API_KEY)
+    response = client.chat("你好，请介绍一下你自己")
+    print("DeepSeek回应:", response)
+'''
+        return sample_code
+    
+    def run_demo(self):
+        """运行演示"""
+        self.logger.info("开始运行DeepSeek演示程序")
+        
+        # 1. 生成示例代码
+        sample_code = self.create_sample_code()
+        
+        # 2. 演示聊天能力（模拟）
+        chat_results = self.demonstrate_chat_capability()
+        
+        # 3. 创建输出内容
+        output_content = f"""DeepSeek API 使用示例
+生成时间: {time.strftime('%Y-%m-%d %H:%M:%S')}
+
+==================== 示例代码 ====================
+{sample_code}
+
+==================== 聊天演示结果 ====================
+由于需要真实API密钥，以下是模拟的响应格式：
+{chat_results}
+
+==================== 使用说明 ====================
+1. 将API配置中的api_key替换为您的实际密钥
+2. 根据需要调整模型版本和其他参数
+3. 运行代码前请确保已安装requests库: pip install requests
+
+==================== 注意事项 ====================
+- 请遵守DeepSeek的使用条款
+- 注意API调用频率限制
+- 妥善保管您的API密钥
+
+代码生成完成！您可以保存此文件为.py后缀并运行。
+"""
+        
+        # 保存到文件
+        success = self.file_manager.write_file(
+            "deepseek_api_example.txt",
+            output_content
+        )
+        
+        if success:
+            self.logger.info("示例文件已成功生成: deepseek_api_example.txt")
+            return output_content
+        else:
+            self.logger.error("文件生成失败")
+            return None
+
+# ==================== 主程序 ====================
+if __name__ == "__main__":
+    print("=" * 60)
+    print("DeepSeek API 示例程序")
+    print("=" * 60)
+    
+    # 创建示例实例
+    example = DeepSeekExample()
+    
+    # 运行演示
+    result = example.run_demo()
+    
+    if result:
+        print("\n程序执行成功！")
+        print("输出文件已保存为: deepseek_api_example.txt")
+        print("\n文件内容预览:")
+        print("-" * 50)
+        print(result[:500] + "..." if len(result) > 500 else result)
+        print("-" * 50)
+    else:
+        print("程序执行失败，请检查日志")
+    
+    print("\n程序结束")
